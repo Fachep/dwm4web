@@ -1,0 +1,14 @@
+﻿* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font: 13px Helvetica, Arial; background: #000; color: #fff; max-width: 330px; margin: 0 auto; }
+a { color: #fff; }
+form#login { width: 330px; margin: 100px auto auto auto; font-size: 20px; }
+input { background: #000; color: #fff; border: solid 1px; font-size: 20px; }
+#license { position: absolute; display: none; overflow: hidden; border: solid; margin: auto; }
+#unp {
+	background: #fff;
+	color: #000;
+	border-width: 5px 3px 3px 3px;
+	border-style: solid;
+	border-radius: 2px;
+	border-color: #fff;
+	}

@@ -1,0 +1,67 @@
+﻿<!doctype html>
+<html>
+  <head>
+    <title>Diewithme For Web--[Login]</title>
+	<meta http-equiv="charset" content="utf-8" />
+	<link rel="stylesheet" href="./css/sheet.css" type="text/css" />
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form id="footer" action="" disabled>
+      <input id="m" autocomplete="off" value="Testing" disabled /><button disabled>Send</button>
+    </form>
+<script src="./js/socket.io.js"></script>
+<script src="./js/jquery.js"></script>
+<script src="./js/footer.js"></script>
+<script>
+  $(function () {
+    var socket = io('https://api.diewithme.online');
+    /*$('form').submit(function(){
+      socket.emit('set_message', $('#m').val());
+      $('#m').val('');
+      return false;
+    });*/
+	socket.emit('chooseNickname','{"username":"test"}');
+    socket.on('set_message', function(msg){
+      $('#messages').append($('<li>set_message:').text(msg));
+    });
+	socket.on('set_messages', function(msg){
+      $('#messages').append($('<li>set_messages:').text(msg));
+    });
+	socket.on('validation_answer', function(msg){
+      $('#messages').append($('<li>validation_answer:').text(msg));
+    });
+	socket.on('get_nickname', function(msg){
+      $('#messages').append($('<li>get_nickname:').text(msg));
+    });
+	socket.on('new_message', function(msg){
+      $('#messages').append($('<li>new_message:').text(msg));
+    });
+	socket.on('get_messages', function(msg){
+      $('#messages').append($('<li>get_messages:').text(msg));
+    });
+	socket.on('chooseNickname', function(msg){
+      $('#messages').append($('<li>chooseNickname:').text(msg));
+    });
+	socket.on('userValidation', function(msg){
+      $('#messages').append($('<li>userValidation:').text(msg));
+    });
+	socket.on('send_report_user', function(msg){
+      $('#messages').append($('<li>send_report_user:').text(msg));
+    });
+  });
+ /*emit
+ new_message
+ get_messages
+ chooseNickname
+ userValidation
+ send_report_user
+ **on
+ set_messages
+ set_message
+ validation_answer
+ get_nickname
+ */
+</script>
+  </body>
+</html>

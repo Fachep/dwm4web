@@ -1,0 +1,44 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="charset" content="utf-8" />
+	<link rel="stylesheet" href="./css/sheet.css" type="text/css" />
+	<script>
+		function licensehid(){
+			document.getElementById('license').style.display = 'none';
+			document.getElementById('lica').onclick = licensevis;
+		}
+		function licensevis(){
+			document.getElementById('license').style.display = 'inherit';
+			document.getElementById('lica').onclick = licensehid;
+		}
+		function check(){
+			var liccheEle = document.getElementById('licche');
+			if(liccheEle.checked){
+			}else{
+				
+			}
+		}
+		
+	</script>
+	<script src="./js/socket.io.js"></script>
+	<script src="./js/jquery.js"></script>
+	<script src="./js/footer.js"></script>
+</head>
+<body>
+<form id="login" method="get" action="./client.html">
+<p><b id="unp">
+用户名<input id="username" name="username" title="不含有下划线以外所有符号" pattern="(\w|[^\x00-\xff]){1,255}" autofocus>
+<input type="submit" value="登录" onclick="return;">
+</b></p>
+<p>
+<input id="licche" type="checkbox" title="我同意《终端用户协议》" checked>
+我同意<a id="lica" href="#" onclick="licensevis()">《终端用户协议》</a>
+</p>
+<iframe id="license" src="./license.html" framebroder="no" scrolling="yes"></iframe>
+</form>
+<footer id="footer">
+<p>Copyright &copy; 2018 Fachep Han. All rights reserved.</p>
+</footer>
+</body>
+</html>
