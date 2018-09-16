@@ -1,5 +1,5 @@
 ﻿* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font: 13px Helvetica, Arial; background: #000; color: #fff; max-width: 330px; margin: 0 auto; }
+html { font: 13px Helvetica, Arial; background: #000; color: #fff; max-width: 330px; margin: 0 auto; }
 a { color: #fff; }
 form#login { width: 330px; margin: 100px auto auto auto; font-size: 20px; }
 input { background: #000; color: #fff; border: solid 1px; font-size: 20px; }

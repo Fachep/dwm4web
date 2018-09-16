@@ -3,6 +3,7 @@
 <head>
 	<meta http-equiv="charset" content="utf-8" />
 	<link rel="stylesheet" href="./css/sheet.css" type="text/css" />
+	<title>DieWithMe for Web[Login] - NaN%</title>
 	<script>
 		function licensehid(){
 			document.getElementById('license').style.display = 'none';
@@ -14,25 +15,28 @@
 		}
 		function check(){
 			var liccheEle = document.getElementById('licche');
+			var loginEle = document.getElementById('loginbtn');
 			if(liccheEle.checked){
+				loginEle.disabled='';
+				loginEle.style.background='#000';
 			}else{
-				
+				loginEle.disabled='1';
+				loginEle.style.background='#777';
 			}
 		}
-		
 	</script>
 	<script src="./js/socket.io.js"></script>
 	<script src="./js/jquery.js"></script>
 	<script src="./js/footer.js"></script>
 </head>
-<body>
+<body onload="check()">
 <form id="login" method="get" action="./client.html">
 <p><b id="unp">
-用户名<input id="username" name="username" title="不含有下划线以外所有符号" pattern="(\w|[^\x00-\xff]){1,255}" autofocus>
-<input type="submit" value="登录" onclick="return;">
+用户名<input id="username" name="username" title="不含有下划线以外所有符号" pattern="(\w-|[^\x00-\xff]){1,255}" autofocus>
+<input id="loginbtn" type="submit" value="登录">
 </b></p>
 <p>
-<input id="licche" type="checkbox" title="我同意《终端用户协议》" checked>
+<input id="licche" type="checkbox" title="我同意《终端用户协议》" onclick="check()" checked>
 我同意<a id="lica" href="#" onclick="licensevis()">《终端用户协议》</a>
 </p>
 <iframe id="license" src="./license.html" framebroder="no" scrolling="yes"></iframe>

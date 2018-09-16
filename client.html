@@ -1,55 +1,62 @@
 ﻿<!doctype html>
 <html>
   <head>
-    <title>Diewithme For Web--[Login]</title>
+	<title>DieWithMe for Web[Chat] - NaN%</title>
 	<meta http-equiv="charset" content="utf-8" />
 	<link rel="stylesheet" href="./css/sheet.css" type="text/css" />
   </head>
   <body>
-    <ul id="messages"></ul>
-    <form id="footer" action="" disabled>
-      <input id="m" autocomplete="off" value="Testing" disabled /><button disabled>Send</button>
-    </form>
+	<ul id="messages"></ul>
+	<form id="footer" action="" disabled>
+	  <input id="m" autocomplete="off" value="Testing" disabled /><button disabled>Send</button>
+	</form>
 <script src="./js/socket.io.js"></script>
 <script src="./js/jquery.js"></script>
 <script src="./js/footer.js"></script>
+<script src="./js/cookies.js"></script>
 <script>
-  $(function () {
-    var socket = io('https://api.diewithme.online');
-    /*$('form').submit(function(){
-      socket.emit('set_message', $('#m').val());
-      $('#m').val('');
-      return false;
-    });*/
-	socket.emit('chooseNickname','{"username":"test"}');
-    socket.on('set_message', function(msg){
-      $('#messages').append($('<li>set_message:').text(msg));
-    });
+function getQuery(name){
+	var reg = new RegExp("(^|&)"+name+"=([^&]*)(&|$)");
+	var r = window.location.search.substr(1).match(reg);
+	if(r!=null)return  unescape(r[2]); return null;
+};
+</script>
+<script>
+$(function () {
+	var socket = io('https://api.diewithme.online');
+	/*$('form').submit(function(){
+	  socket.emit('set_message', $('#m').val());
+	  $('#m').val('');
+	  return false;
+	});*/
+	socket.emit('userValidation','{"uid":"[B@6537cf78"}');
+	socket.emit('chooseNickname','{"username":"Fachep"}');
+	socket.emit('get_messages','{ false }');
+	socket.on('set_message', function(msg){
+	  $('#messages').append($('<li id="set_message">').text(msg));
+	});
 	socket.on('set_messages', function(msg){
-      $('#messages').append($('<li>set_messages:').text(msg));
-    });
+	  $('#messages').append($('<li id="set_messages">').text(msg));
+	});
 	socket.on('validation_answer', function(msg){
-      $('#messages').append($('<li>validation_answer:').text(msg));
-    });
+	  $('#messages').append($('<li id="validation_answer">').text(msg));
+	});
 	socket.on('get_nickname', function(msg){
-      $('#messages').append($('<li>get_nickname:').text(msg));
-    });
+	  $('#messages').append($('<li id="get_nickname">').text(msg));
+	});
 	socket.on('new_message', function(msg){
-      $('#messages').append($('<li>new_message:').text(msg));
-    });
+	  $('#messages').append($('<li id="new_message">').text(msg));
+	});
 	socket.on('get_messages', function(msg){
-      $('#messages').append($('<li>get_messages:').text(msg));
-    });
+	  $('#messages').append($('<li id="get_messages">').text(msg));
+	});
 	socket.on('chooseNickname', function(msg){
-      $('#messages').append($('<li>chooseNickname:').text(msg));
-    });
-	socket.on('userValidation', function(msg){
-      $('#messages').append($('<li>userValidation:').text(msg));
-    });
+	  $('#messages').append($('<li id="chooseNickname">').text(msg));
+	});
 	socket.on('send_report_user', function(msg){
-      $('#messages').append($('<li>send_report_user:').text(msg));
-    });
-  });
+	  $('#messages').append($('<li id="send_report_user">').text(msg));
+	});
+});
  /*emit
  new_message
  get_messages
