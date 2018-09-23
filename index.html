@@ -4,6 +4,10 @@
 	<meta http-equiv="charset" content="utf-8" />
 	<link rel="stylesheet" href="./css/sheet.css" type="text/css" />
 	<title>DieWithMe for Web[Login] - NaN%</title>
+	<script src="./js/jquery.js"></script>
+	<script src="./js/footer.js"></script>
+	<script src="./js/socket.io.js"></script>
+	<script src="./js/cookies.js"></script>
 	<script>
 		function licensehid(){
 			document.getElementById('license').style.display = 'none';
@@ -24,16 +28,37 @@
 				loginEle.style.background='#777';
 			}
 		}
+		function uuid() {
+			function S4() {
+				return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+			}
+			return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+		}
+		$(function(){
+			var socket = io('https://api.diewithme.online');
+			var uid = (getCookie('uid')?getCookie('uid'):uuid());
+			setCookie('uid',uid,365);
+			$(':hidden').val(uid);
+			$('form').submit(function(){if (!$('#username').val()) return false;
+				socket.on('getUserConnect', function(msg){
+					socket.emit('userValidation',{"uid":uid});
+					socket.emit('chooseNickname',{"username":$('#username').val()});
+				});
+				socket.on('get_nickname', function(msg){
+					if(msg=='true'){socket.disconnect();return true;}
+					else{return false;}
+				});
+				return false;
+			});
+		})
+		
 	</script>
-	<script src="./js/socket.io.js"></script>
-	<script src="./js/jquery.js"></script>
-	<script src="./js/footer.js"></script>
 </head>
 <body onload="check()">
 <form id="login" method="get" action="./client.html">
+<input type="hidden" name="uid"/>
 <p><b id="unp">
-用户名<input id="username" name="username" title="不含有下划线以外所有符号" pattern="(\w-|[^\x00-\xff]){1,255}" autofocus>
-<input id="loginbtn" type="submit" value="登录">
+用户名<input id="username" name="username" title="不含符号" pattern="[\w\-\u00ff-\uffff]+" autofocus><input id="loginbtn" type="submit" value="登录">
 </b></p>
 <p>
 <input id="licche" type="checkbox" title="我同意《终端用户协议》" onclick="check()" checked>
