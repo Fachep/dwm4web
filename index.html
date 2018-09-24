@@ -5,7 +5,6 @@
 	<link rel="stylesheet" href="./css/sheet.css" type="text/css" />
 	<title>DieWithMe for Web[Login] - NaN%</title>
 	<script src="./js/jquery.js"></script>
-	<script src="./js/footer.js"></script>
 	<script src="./js/socket.io.js"></script>
 	<script src="./js/cookies.js"></script>
 	<script>
@@ -21,11 +20,11 @@
 			var liccheEle = document.getElementById('licche');
 			var loginEle = document.getElementById('loginbtn');
 			if(liccheEle.checked){
-				loginEle.disabled='';
-				loginEle.style.background='#000';
+				$('input').disabled='';
+				$('input').css({background : '#000'});
 			}else{
-				loginEle.disabled='1';
-				loginEle.style.background='#777';
+				$('input').disabled='1';
+				$('input').css({background : '#777'});
 			}
 		}
 		function uuid() {
@@ -40,34 +39,42 @@
 			setCookie('uid',uid,365);
 			$(':hidden').val(uid);
 			$('form').submit(function(){if (!$('#username').val()) return false;
+				var gnn;
+				$('input').css({background : '#777'});
+				$('input').disabled='1';
 				socket.on('getUserConnect', function(msg){
 					socket.emit('userValidation',{"uid":uid});
 					socket.emit('chooseNickname',{"username":$('#username').val()});
+					
 				});
-				socket.on('get_nickname', function(msg){
-					if(msg=='true'){socket.disconnect();return true;}
-					else{return false;}
+				socket.on('get_nickname', function(bool){
+					gnn = bool;
 				});
-				return false;
+				var tm = Number(new Date());
+				while(!gnn&&(Number(new Date())<(tm+10000)));
+				if(gnn=='true'){socket.disconnect();return true;}else{$('input').disabled='';$('input').css({background : '#000'});return false;}
 			});
+			$(window).resize(function(){
+				$('footer').css({
+					top : $(window).height()-$('footer').height()
+				});
+			});
+			$('footer').css({top : $(window).height()-$('footer').height()});
 		})
-		
 	</script>
 </head>
 <body onload="check()">
 <form id="login" method="get" action="./client.html">
-<input type="hidden" name="uid"/>
+<input type="hidden" name="uid" />
 <p><b id="unp">
-用户名<input id="username" name="username" title="不含符号" pattern="[\w\-\u00ff-\uffff]+" autofocus><input id="loginbtn" type="submit" value="登录">
+用户名<input id="username" name="username" title="不含符号" pattern="[\w\-\u00ff-\uffff]+" autofocus /><input id="loginbtn" type="submit" value="登录" />
 </b></p>
 <p>
-<input id="licche" type="checkbox" title="我同意《终端用户协议》" onclick="check()" checked>
+<input id="licche" type="checkbox" title="我同意《终端用户协议》" onclick="check()" checked />
 我同意<a id="lica" href="#" onclick="licensevis()">《终端用户协议》</a>
 </p>
 <iframe id="license" src="./license.html" framebroder="no" scrolling="yes"></iframe>
 </form>
-<footer id="footer">
-<p>Copyright &copy; 2018 Fachep Han. All rights reserved.</p>
-</footer>
+<footer>Copyright &copy; 2018 Fachep Han. All rights reserved.</footer>
 </body>
 </html>

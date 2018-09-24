@@ -6,13 +6,13 @@
 	<link rel="stylesheet" href="./css/sheet.css" type="text/css" />
   </head>
   <body>
-	<ul id="messages"></ul>
-	<form id="footer">
-	  <input id="msgin" autocomplete="off"/><input type="submit" id="sendbtn" value="发送"/>
-	</form>
+	<main id="messages"></main>
+	<br>
+	<footer><form>
+	  <input id="msgin" autocomplete="off" autofocus /><input type="submit" id="sendbtn" value="发送"/>
+	</form></footer>
 <script src="./js/socket.io.js"></script>
 <script src="./js/jquery.js"></script>
-<script src="./js/cookies.js"></script>
 <script>
 function getQuery(name){
 	var reg = new RegExp("(^|&)"+name+"=([^&]*)(&|$)");
@@ -23,45 +23,48 @@ $(function () {
 	if(!getQuery('username')||!getQuery('uid'))history.go(-1);
 	var lastmid;
 	function addmsg(obj){
-		lastmid = (obj._id?obj._id:lastmid);
-		msgblock = $('<div class="msgblock-'+obj.uid+'" id="'+obj._id+'">')
-		msgp = $('<p class="msgp">').text(obj.bl+'%');
-		msgp.append($('<a class="message">').text(obj.message));
-		msgblock.append(msgp);
-		var t = new Date(obj.time*1000);
-		var st = t.getFullYear()+"-"+(t.getMonth()+1)+"-"+t.getDate()+" "+t.getHours()+":"+t.getMinutes();
-		msgblock.append($('<p class="ndp">').text(obj.user+" @ "+st));
-		$('#messages').append(msgblock);
-        $(document).scrollTop($(document).height()-$(window).height()); 
+		for(i=0;i<obj.length;i++){
+			lastmid = (obj[i]._id?obj[i]._id:lastmid);
+			msgblock = $('<div class="msgblock-'+obj[i].uid+'" id="'+obj[i]._id+'">')
+			msgp = $('<p class="msgp">').text(obj[i].bl+'%');
+			msgp.append($('<a class="message">').text(obj[i].message));
+			msgblock.append(msgp);
+			var t = new Date(obj[i].time*1000);
+			var st = t.getFullYear()+"-"+(t.getMonth()+1)+"-"+t.getDate()+" "+t.getHours()+":"+t.getMinutes();
+			msgblock.append($('<p class="ndp">').text(obj[i].user+" @ "+st));
+			$('#messages').append(msgblock);
+			$(document).scrollTop($(document).height()-$(window).height()); 
+		}
+		
 	}
 	var socket = io('https://api.diewithme.online');
 	$('form').submit(function(){
 		var obj = {"chargin":"false","bl":"10"};
-		obj.message=$('#msgin').val();
-		obj.user=getQuery('username');
-		obj.time=Date.parse(new Date()).toString().substr(0,10);
-		obj.uid=getQuery('uid');
+		obj.message = $('#msgin').val();
+		obj.user = getQuery('username');
+		obj.time = Date.parse(new Date()).toString().substr(0,10);
+		obj.uid = getQuery('uid');
 		socket.emit('new_message', obj);
-		addmsg(obj);
+		addmsg([obj]);
 		$('#msgin').val('');
 		return false;
 	});
 	socket.on('getUserConnect', function(msg){
 		socket.emit('userValidation',{"uid":getQuery('uid')});
-		socket.emit('chooseNickname',{"username":"Fachep"});
+		socket.emit('chooseNickname',{"username":getQuery('username')});
 	})
 	socket.emit('get_messages',{});
-	socket.on('set_message', function(obj){
-			addmsg(obj[0]);
-	});
-	socket.on('set_messages', function(obj){
-		for(i=0;i<=14;i++){
-			addmsg(obj[i]);
-		}
-	});
+	socket.on('set_message', addmsg);
+	socket.on('set_messages', addmsg);
 	socket.on('get_nickname', function(msg){
-	  
+	  if(msg=="false"){io.disconnect();history.go(-1);}
 	});
+	$(window).resize(function(){
+		$('footer').css({
+			top : $(window).height()-$('footer').height()
+		});
+	});
+	$('footer').css({top : $(window).height()-$('footer').height()});
 });
  /*emit
  new_message

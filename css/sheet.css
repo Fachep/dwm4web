@@ -1,9 +1,10 @@
 ﻿/* { margin: 0; padding: 0; box-sizing: border-box; }
-html { font: 13px Helvetica, Arial; background: #000; color: #fff; max-width: 400px; margin: 0 auto; }
+*/
+html { background: #000; color: #fff; }
+#license { position: absolute; display: none; overflow: hidden; border: solid; }
 a { color: #fff; }
 form#login { width: 350px; margin: 100px auto auto auto; font-size: 20px; }
 input { background: #000; color: #fff; border: solid 1px; font-size: 20px; }
-#license { position: absolute; display: none; overflow: hidden; border: solid; margin: auto; }
 #unp {
 	background: #fff;
 	color: #000;
@@ -12,11 +13,6 @@ input { background: #000; color: #fff; border: solid 1px; font-size: 20px; }
 	border-radius: 2px;
 	border-color: #fff;
 	}
-#footer { width: 100%; margin: 0; left: 0; }
 #msgin { width: 90%; height: 50px }
 #sendbtn { width: 10%; height: 50px; }
-*/
-#footer {
-    height: 50px;
-    flex-shrink: 0;
-}
+footer { z-index: 100; position: fixed; width: 100%; margin: 0; left: 0; }
