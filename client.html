@@ -41,7 +41,7 @@ $(function () {
 		
 	}
 	$('form').submit(function(){if(!$('#msgin').val()||!navigator.onLine||($('#msgin').val().length>100))return false;
-		var json = {"chargin":"false","bl":"4"};
+		var json = {"chargin":"false","bl":"9"};
 		json.message = $('#msgin').val();
 		json.user = getQuery('username');
 		json.time = Date.parse(new Date()).toString().substr(0,10);
