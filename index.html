@@ -9,21 +9,20 @@
 	<script src="./js/cookies.js"></script>
 	<script>
 		function licensehid(){
-			document.getElementById('license').style.display = 'none';
+			$('#license').fadeOut();
 			document.getElementById('lica').onclick = licensevis;
 		}
 		function licensevis(){
-			document.getElementById('license').style.display = 'inherit';
+			$('#license').fadeIn();
 			document.getElementById('lica').onclick = licensehid;
 		}
 		function check(){
 			var liccheEle = document.getElementById('licche');
-			var loginEle = document.getElementById('loginbtn');
 			if(liccheEle.checked){
-				$('input').disabled='';
+				$('input[type!="checkbox"]').attr("disabled",false);
 				$('input').css({background : '#000'});
 			}else{
-				$('input').disabled='1';
+				$('input[type!="checkbox"]').attr("disabled",true);
 				$('input').css({background : '#777'});
 			}
 		}
@@ -34,26 +33,10 @@
 			return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
 		}
 		$(function(){
-			var socket = io('https://api.diewithme.online');
 			var uid = (getCookie('uid')?getCookie('uid'):uuid());
 			setCookie('uid',uid,365);
 			$(':hidden').val(uid);
-			$('form').submit(function(){if (!$('#username').val()) return false;
-				var gnn;
-				$('input').css({background : '#777'});
-				$('input').disabled='1';
-				socket.on('getUserConnect', function(msg){
-					socket.emit('userValidation',{"uid":uid});
-					socket.emit('chooseNickname',{"username":$('#username').val()});
-					
-				});
-				socket.on('get_nickname', function(bool){
-					gnn = bool;
-				});
-				var tm = Number(new Date());
-				while(!gnn&&(Number(new Date())<(tm+10000)));
-				if(gnn=='true'){socket.disconnect();return true;}else{$('input').disabled='';$('input').css({background : '#000'});return false;}
-			});
+			$('form').submit(function(){if (!$('#username').val()||!navigator.onLine) return false;});
 			$(window).resize(function(){
 				$('footer').css({
 					top : $(window).height()-$('footer').height()
