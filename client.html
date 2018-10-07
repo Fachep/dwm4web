@@ -4,6 +4,7 @@
 	<title>DieWithMe for Web[Chat] - NaN%</title>
 	<meta http-equiv="charset" content="utf-8" />
 	<link rel="stylesheet" href="./css/sheet.css" type="text/css" />
+	<link rel="shortcut icon" href="./favicon.png"/>
   </head>
   <body>
 	<main id="messages"></main>
@@ -17,28 +18,33 @@
 function getQuery(name){
 	var reg = new RegExp("(^|&)"+name+"=([^&]*)(&|$)");
 	var r = window.location.search.substr(1).match(reg);
-	if(r!=null)return  unescape(r[2]); return null;
+	if(r!=null)return  unescape(decodeURI(r[2])); return null;
 };
 $(function () {
 	if(!getQuery('username')||!getQuery('uid'))history.go(-1);
 	var lastmid;
-	var socket = io('https://api.diewithme.online');
-	addEventListener('offline',function(){socket.disconnect()});
-	addEventListener('online',function(){socket.connect()});
+	window.socket = io('https://api.diewithme.online');
+	addEventListener('offline',function(){window.socket.disconnect();console.log('Browser Offline')});
+	addEventListener('online',function(){window.socket.connect();console.log('Browser Online')});
 	function addmsg(json){if(json.length>1)$('#messages').text('');
 		for(i=0;i<json.length;i++){
 			lastmid = (json[i]._id?json[i]._id:lastmid);
-			msgblock = $('<div class="msgblock-'+json[i].uid+'" id="'+json[i]._id+'">')
-			msgp = $('<p class="msgp">').text(json[i].bl+'%');
-			msgp.append($('<a class="message">').text(json[i].message));
-			msgblock.append(msgp);
+			msg = $('<p id="'+json[i]._id+'" class="'+json[i].uid+'">');
+			msgblock = $('<div class="msgblock">');
+			msga = $('<div class="message">');
+			ndp = $('<div class="ndp">');
+			msgblock.text(json[i].bl+'%');
+			msga.text(json[i].message);
 			var t = new Date(json[i].time*1000);
 			var st = t.getFullYear()+"-"+(t.getMonth()+1)+"-"+t.getDate()+" "+t.getHours()+":"+t.getMinutes();
-			msgblock.append($('<p class="ndp">').text(json[i].user+" @ "+st));
-			$('#messages').append(msgblock);
+			ndp.text(json[i].user+' @ '+st);
+			msgblock.append(msga);
+			msg.append(msgblock);
+			msg.append(ndp);
+			$('#messages').append(msg);
 			$(document).scrollTop($(document).height()-$(window).height()); 
 		}
-		
+		console.log('Add Message(s):%i',json.length);
 	}
 	$('form').submit(function(){if(!$('#msgin').val()||!navigator.onLine||($('#msgin').val().length>100))return false;
 		var json = {"chargin":"false","bl":"9"};
@@ -46,30 +52,32 @@ $(function () {
 		json.user = getQuery('username');
 		json.time = Date.parse(new Date()).toString().substr(0,10);
 		json.uid = getQuery('uid');
-		socket.emit('new_message', json);
+		window.socket.emit('new_message', json);
 		addmsg([json]);
 		$('#msgin').val('');
 		return false;
 	});
-	if(!navigator.onLine)socket.disconnect();
-	socket.on('getUserConnect', function(msg){
-		socket.emit('userValidation',{"uid":getQuery('uid')});
-		socket.emit('chooseNickname',{"username":getQuery('username')});
-		socket.emit('get_messages',{});
+	if(!navigator.onLine)window.socket.disconnect();
+	window.socket.on('getUserConnect', function(msg){
+		window.socket.emit('userValidation',{"uid":getQuery('uid')});
+		window.socket.emit('chooseNickname',{"username":getQuery('username')});
+		window.socket.emit('get_messages',{});
+		console.log('Get User Connect');
 	})
-	socket.on('set_message', addmsg);
-	socket.on('set_messages', addmsg);
-	socket.on('validation_answer',function(msg){console.log('answer'+JSON.stringify(msg))});
-	socket.on('validation_username',function(msg){console.log('username'+JSON.stringify(msg))});
-	socket.on('get_nickname', function(msg){console.log('get_nickname'+msg)
-	  if(msg=="false"){socket.disconnect();history.go(-1);}
+	window.socket.on('set_message', addmsg);
+	window.socket.on('set_messages', addmsg);
+	window.socket.on('validation_answer',function(msg){console.log('answer'+JSON.stringify(msg))});
+	window.socket.on('validation_username',function(msg){console.log('username'+JSON.stringify(msg))});
+	window.socket.on('get_nickname', function(msg){
+		console.log('get_nickname'+msg);
+		if(msg=="false"){window.socket.disconnect();console.log('Disabled Username');history.go(-1);}
 	});
 	$(window).resize(function(){
-		$('footer').css({
-			top : $(window).height()-$('footer').height()
-		});
+		$('footer').css({top : $(window).height()-$('footer').height()});
+		$('#msgin').css({width : $(window).width()-110});
 	});
 	$('footer').css({top : $(window).height()-$('footer').height()});
+	$('#msgin').css({width : $(window).width()-110});
 });
  /*emit
  new_message
