@@ -1,12 +1,13 @@
-﻿html { background: #000; color: #fff; font-family: sans-serif; font-size: 20px; }
+﻿* { font-family: sans-serif; font-size: 20px; }
+html { background: #000; color: #fff; }
 #license { position: absolute; display: none; overflow: hidden; border: solid; }
 a { color: #fff; }
-form#login { width: 350px; margin: 100px auto auto auto; }
-input { background: #000; color: #fff; border: solid 1px; font-size: 20px; }
+form#login { width: 400px; margin: 100px auto auto auto; }
+input { background: #000; color: #fff; border: solid 1px; }
 #unp { background: #fff; color: #000; border-width: 3px; border-style: solid; border-radius: 2px; border-color: #fff; }
 #msgin { height: 50px; }
 #sendbtn { width: 100px; height: 50px; }
-footer { z-index: 100; position: fixed; width: 100%; margin: 0; }
+footer { z-index: 100; position: fixed; }
 .msgblock { background: #fff; color: #000; border-width: 1px; border-style: solid; border-radius: 2px; border-color: #fff; width: auto; max-width: 60%; }
 .message { background: #000; color: #fff; width: auto; }
 .ndp { color: #ccc; font-size: 12.5px; }
