@@ -7,51 +7,88 @@
 	<link rel="shortcut icon" href="./favicon.png"/>
   </head>
   <body>
+	<header>
+		<h3>Die With Me<i>--Web version by <a href="mailto:mail@fachep.com">Fachep</a></i></h3>
+		<h4>NaN%</h4>
+	</header>
+	<br><br><br><br><br>
 	<main id="messages"></main>
 	<br><br>
-	<footer><form>
-	  <input id="msgin" autocomplete="off" autofocus /><input type="submit" id="sendbtn" value="发送"/>
+	<footer><form class="sendblock">
+	  <input id="msgin" autocomplete="off" autofocus /><input type="submit" id="sendbtn" value="Send"/>
 	</form></footer>
 <script src="./js/socket.io.js"></script>
 <script src="./js/jquery.js"></script>
 <script>
-function getQuery(name){
-	var reg = new RegExp("(^|&)"+name+"=([^&]*)(&|$)");
-	var r = window.location.search.substr(1).match(reg);
-	if(r!=null)return  unescape(decodeURI(r[2])); return null;
-};
 $(function () {
-	if(!getQuery('username')||!getQuery('uid'))history.go(-1);
+	function getQuery(name){
+		var reg = new RegExp("(^|&)"+name+"=([^&]*)(&|$)");
+		var r = window.location.search.substr(1).match(reg);
+		if(r!=null)return  unescape(decodeURI(r[2])); return null;
+	};
+	window.uid = getQuery('uid');
+	if(!getQuery('username')||!window.uid)history.go(-1);
+	$(window).resize(function(){
+		$('footer').css({top : $(window).height()-$('footer').height()});
+		$('#msgin').css({width : $(window).width()-120});
+	});
+	$('footer').css({top : $(window).height()-$('footer').height()});
+	$('#msgin').css({width : $(window).width()-135});
+	if(isFinite(window.uid.substr(0,1)))$('head').append($('<style>').text('.\\'+window.uid.substr(-1)+window.uid.substr(0,1)+'\ '+window.uid.substr(1)+' { float:right; }'));
+	else $('head').append($('<style>').text('.'+window.uid+' { float:right; }'));
 	var lastmid;
-	window.socket = io('https://api.diewithme.online');
-	addEventListener('offline',function(){window.socket.disconnect();console.log('Browser Offline')});
-	addEventListener('online',function(){window.socket.connect();console.log('Browser Online')});
 	function addmsg(json){if(json.length>1)$('#messages').text('');
 		for(i=0;i<json.length;i++){
 			lastmid = (json[i]._id?json[i]._id:lastmid);
-			msg = $('<p id="'+json[i]._id+'" class="'+json[i].uid+'">');
-			msgblock = $('<div class="msgblock">');
-			msga = $('<div class="message">');
-			ndp = $('<div class="ndp">');
-			msgblock.text(json[i].bl+'%');
-			msga.text(json[i].message);
+			msgblock = $('<div class="msgblock '+json[i].uid+'">');
+			msgt = $('<tbody id="'+json[i]._id+'" class="msgtable '+json[i].uid+'">');
+			msg = $('<td class="message">');
+			bl = $('<td class="bl">');
+			msg.text(json[i].message);
+			bl.text(json[i].bl+'%');
+			if(json[i].uid==window.uid){
+				msgt.append(msg);
+				msgt.append(bl);
+			}else{
+				msgt.append(bl);
+				msgt.append(msg);
+			}
+			msgblock.append(msgt);
+			ndp = $('<p class="ndp '+json[i].uid+'">');
 			var t = new Date(json[i].time*1000);
 			var st = t.getFullYear()+"-"+(t.getMonth()+1)+"-"+t.getDate()+" "+t.getHours()+":"+t.getMinutes();
 			ndp.text(json[i].user+' @ '+st);
-			msgblock.append(msga);
-			msg.append(msgblock);
-			msg.append(ndp);
-			$('#messages').append(msg);
+			$('#messages').append(msgblock);
+			$('#messages').append(ndp);
+			if(json[i].uid==window.uid)	$('#messages').append($('<div style="float:none;height:80px">'));
 			$(document).scrollTop($(document).height()-$(window).height()); 
 		}
 		console.log('Add Message(s):%i',json.length);
 	}
+	function getForBat(){
+		var bs = {'bl':9,'chargin':true};
+		if(navigator.getBattery) navigator.getBattery().then(function(obj){
+			bs.bl = obj.level;
+			bs.chargin = obj.charging;
+		});else if(navigator.battery||navigator.mozBattery||navigator.webkitBattery){
+			var battery = navigator.battery||navigator.mozBattery||navigator.webkitBattery;
+			bs.bl = battery.level;
+			bs.chargin = battery.charging;
+		}
+		return bs;
+	}
+	window.socket = io('https://api.diewithme.online');
+	addEventListener('offline',function(){window.socket.disconnect();console.log('Browser Offline')});
+	addEventListener('online',function(){window.socket.connect();console.log('Browser Online')});
 	$('form').submit(function(){if(!$('#msgin').val()||!navigator.onLine||($('#msgin').val().length>100))return false;
-		var json = {"chargin":"false","bl":"9"};
+		var json = {"version":"FSWeb"};
 		json.message = $('#msgin').val();
 		json.user = getQuery('username');
 		json.time = Date.parse(new Date()).toString().substr(0,10);
-		json.uid = getQuery('uid');
+		json.uid = window.uid;
+		var bs = getForBat();
+		json.bl = bs.bl;
+		json.chargin = bs.chargin;
 		window.socket.emit('new_message', json);
 		addmsg([json]);
 		$('#msgin').val('');
@@ -59,11 +96,11 @@ $(function () {
 	});
 	if(!navigator.onLine)window.socket.disconnect();
 	window.socket.on('getUserConnect', function(msg){
-		window.socket.emit('userValidation',{"uid":getQuery('uid')});
+		window.socket.emit('userValidation',{"uid":window.uid});
 		window.socket.emit('chooseNickname',{"username":getQuery('username')});
 		window.socket.emit('get_messages',{});
-		console.log('Get User Connect');
-	})
+		console.log('Get User Connected');
+	});
 	window.socket.on('set_message', addmsg);
 	window.socket.on('set_messages', addmsg);
 	window.socket.on('validation_answer',function(msg){console.log('answer'+JSON.stringify(msg))});
@@ -72,12 +109,6 @@ $(function () {
 		console.log('get_nickname'+msg);
 		if(msg=="false"){window.socket.disconnect();console.log('Disabled Username');history.go(-1);}
 	});
-	$(window).resize(function(){
-		$('footer').css({top : $(window).height()-$('footer').height()});
-		$('#msgin').css({width : $(window).width()-110});
-	});
-	$('footer').css({top : $(window).height()-$('footer').height()});
-	$('#msgin').css({width : $(window).width()-110});
 });
  /*emit
  new_message

@@ -1,13 +1,17 @@
-﻿* { font-family: sans-serif; font-size: 20px; }
-html { background: #000; color: #fff; }
+﻿* { font-family: sans-serif; }
+html { background: #000; color: #fff; font-size: 20px; }
+h1,h2,h3,h4,h5,h6,h7 { text-align: center; }
+i { font-size: 10px; }
 #license { position: absolute; display: none; overflow: hidden; border: solid; }
-a { color: #fff; }
+a { color: #fff; font-size: 10px; }
 form#login { width: 400px; margin: 100px auto auto auto; }
 input { background: #000; color: #fff; border: solid 1px; }
 #unp { background: #fff; color: #000; border-width: 3px; border-style: solid; border-radius: 2px; border-color: #fff; }
+.sendblock { border-width: 1px; border-style: solid; border-radius: 2px; border-color: #fff; }
 #msgin { height: 50px; }
-#sendbtn { width: 100px; height: 50px; }
-footer { z-index: 100; position: fixed; }
-.msgblock { background: #fff; color: #000; border-width: 1px; border-style: solid; border-radius: 2px; border-color: #fff; width: auto; max-width: 60%; }
-.message { background: #000; color: #fff; width: auto; }
+#sendbtn { width: 100px; height: 50px; background: #fff; color: #000; border: none; }
+header,footer { z-index: 100; position: fixed; background: #000; width: 100%; top: 0px; }
+.msgblock { width: 100%; }
+.msgtable { background: #fff; color: #000; border-width: 1px; border-style: solid; border-radius: 2px; border-color: #fff; max-width: 60%; display: inline-block; }
+.message { background: #000; color: #fff; }
 .ndp { color: #ccc; font-size: 12.5px; }
