@@ -9,7 +9,7 @@
   <body>
 	<header>
 		<h3>Die With Me<i>--Web version by <a href="mailto:mail@fachep.com">Fachep</a></i></h3>
-		<h4>NaN%</h4>
+		<h4 style="color: #f00">NaN%</h4>
 	</header>
 	<br><br><br><br><br>
 	<main id="messages"></main>
@@ -54,7 +54,7 @@ $(function () {
 				msgt.append(msg);
 			}
 			msgblock.append(msgt);
-			ndp = $('<p class="ndp '+json[i].uid+'">');
+			ndp = $('<p class="ndp '+json[i].uid+' '+json[i].chargin+'">');
 			var t = new Date(json[i].time*1000);
 			var st = t.getFullYear()+"-"+(t.getMonth()+1)+"-"+t.getDate()+" "+t.getHours()+":"+t.getMinutes();
 			ndp.text(json[i].user+' @ '+st);
@@ -64,19 +64,44 @@ $(function () {
 			$(document).scrollTop($(document).height()-$(window).height()); 
 		}
 		console.log('Add Message(s):%i',json.length);
+		$('#msgin').css({width : $(window).width()-120});
 	}
 	function getForBat(){
-		var bs = {'bl':9,'chargin':true};
-		if(navigator.getBattery) navigator.getBattery().then(function(obj){
-			bs.bl = obj.level;
-			bs.chargin = obj.charging;
-		});else if(navigator.battery||navigator.mozBattery||navigator.webkitBattery){
-			var battery = navigator.battery||navigator.mozBattery||navigator.webkitBattery;
-			bs.bl = battery.level;
-			bs.chargin = battery.charging;
-		}
+		var bs = {'bl':9,'chargin':true,'api':false};
+		try{
+			if(typeof(navigator.getBattery)=='function'){navigator.getBattery().then(function(obj){
+				bs.bl = obj.level*100;
+				bs.chargin = obj.charging;
+				bs.api = true;
+			})}else if(navigator.battery||navigator.mozBattery||navigator.webkitBattery){
+				var battery = navigator.battery||navigator.mozBattery||navigator.webkitBattery;
+				bs.bl = battery.level*100;
+				bs.chargin = battery.charging;
+				bs.api = true;
+			}
+		}catch(e){}
 		return bs;
 	}
+	try{
+		if(typeof(navigator.getBattery)=='function'){navigator.getBattery().then(function(battery){
+			if( battery.level*100>4 ) window.location.href = './cantuse.html';
+			$('h4').text(battery.level*100+'%');
+			battery.onlevelchange = function(){
+				if( this.level*100>4 ) window.location.href = './cantuse.html';
+				$('h4').text(this.level*100+'%');
+			};
+		})}else if(navigator.battery||navigator.mozBattery||navigator.webkitBattery){
+			var battery = navigator.battery||navigator.mozBattery||navigator.webkitBattery;
+			if( battery.level*100>4 ) window.location.href = './cantuse.html';
+			$('h4').text(battery.level*100+'%');
+			battery.addEventListener('levelchange',function(data){
+				if( battery.level*100>4 ) window.location.href = './cantuse.html';
+				$('h4').text(data.level*100+'%');
+			});
+		}else{
+			$('h4').text('9%');
+		}
+	}catch(e){};
 	window.socket = io('https://api.diewithme.online');
 	addEventListener('offline',function(){window.socket.disconnect();console.log('Browser Offline')});
 	addEventListener('online',function(){window.socket.connect();console.log('Browser Online')});

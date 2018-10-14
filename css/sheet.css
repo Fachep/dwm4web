@@ -15,3 +15,4 @@ header,footer { z-index: 100; position: fixed; background: #000; width: 100%; to
 .msgtable { background: #fff; color: #000; border-width: 1px; border-style: solid; border-radius: 2px; border-color: #fff; max-width: 60%; display: inline-block; }
 .message { background: #000; color: #fff; }
 .ndp { color: #ccc; font-size: 12.5px; }
+.true:after { content: ''; background: url('../chargin.png'); background-size: cover; display: inline-block; width: 16px; height: 16px; }
